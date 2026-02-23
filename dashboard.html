@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<title>Dashboard Modern</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<style>
+* {
+    box-sizing: border-box;
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+/* ===== Background Matrix ===== */
+body {
+    margin: 0;
+    height: 100vh;
+    overflow: hidden;
+    background: black;
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Canvas Matrix full screen */
+#matrixCanvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 0; /* di bawah semua */
+}
+
+/* ===== Dashboard Card ===== */
+.dashboard-card {
+    position: relative;
+    z-index: 10; /* di atas matrix */
+    background: rgba(0, 0, 0, 0.85); /* sedikit transparan */
+    padding: 40px;
+    border-radius: 20px;
+    border: 2px solid rgba(0, 255, 0, 0.6);
+    box-shadow: 0 0 20px rgba(0,255,0,0.5), 0 0 40px rgba(0,255,0,0.2);
+    text-align: center;
+    width: 500px;
+    animation: electric 1.2s infinite;
+}
+
+/* Bingkai listrik animasi */
+@keyframes electric {
+    0%, 100% { box-shadow: 0 0 15px #00ff00, 0 0 30px #00ff00, 0 0 45px #00ff00; }
+    50% { box-shadow: 0 0 25px #00ff00, 0 0 50px #00ff00, 0 0 75px #00ff00; }
+}
+
+/* Avatar */
+.dashboard-card img {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    margin-bottom: 15px;
+    border: 3px solid #00ff00;
+}
+
+/* Judul & teks */
+.dashboard-card h1 {
+    margin-bottom: 10px;
+}
+.dashboard-card p {
+    margin-bottom: 20px;
+}
+
+/* Grid info card */
+.cards-container {
+    display: flex;
+    justify-content: space-between;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.stat-card {
+    background: rgba(0,255,0,0.1);
+    padding: 20px;
+    border-radius: 12px;
+    width: 120px;
+    text-align: center;
+    transition: transform 0.3s, background 0.3s, box-shadow 0.3s;
+    cursor: pointer;
+    z-index: 10; /* pastikan di atas matrix */
+}
+
+.stat-card:hover {
+    transform: translateY(-5px);
+    background: rgba(0,255,0,0.25);
+    box-shadow: 0 0 15px #00ff00, 0 0 25px #00ff00;
+}
+
+.stat-card i {
+    font-size: 30px;
+    margin-bottom: 10px;
+}
+
+/* Tombol logout */
+.logout-btn {
+    margin-top: 25px;
+    padding: 12px 25px;
+    font-size: 16px;
+    border: none;
+    border-radius: 8px;
+    background: #ff6b6b;
+    cursor: pointer;
+    transition: 0.3s;
+}
+.logout-btn:hover {
+    background: #ff4b4b;
+}
+
+/* Teks neon */
+.teks-warna {
+  font-size: 30px;
+  font-weight: bold;
+  animation: warna 2s infinite;
+}
+
+@keyframes warna {
+  0%   { color: #00ff00; }
+  25%  { color: #00ffaa; }
+  50%  { color: #00ff44; }
+  75%  { color: #00ff88; }
+  100% { color: #00ff00; }
+}
+</style>
+</head>
+
+<body>
+
+<canvas id="matrixCanvas"></canvas>
+
+<div class="dashboard-card">
+    <p class="teks-warna">ADMIN</p>
+    <img src="avatar.png" alt="Avatar">
+    <h1>Selamat Datang Day777👩🏻‍💻</h1>
+    <p>The Main Of The Program</p>
+
+    <div class="cards-container">
+        <div class="stat-card">
+            <i class="fas fa-users"></i>
+            <p>Users</p>
+            <h3>5300</h3>
+        </div>
+        <div class="stat-card">
+            <i class="fas fa-chart-line"></i>
+            <p>Sales</p>
+            <h3>999+</h3>
+        </div>
+        <div class="stat-card">
+            <i class="fas fa-bell"></i>
+            <p>Alerts</p>
+            <h3>999+</h3>
+        </div>
+    </div>
+
+    <button class="logout-btn" onclick="logout()">Logout</button>
+</div>
+
+<script>
+// Logout
+function logout() {
+    window.location.href = "halaman.html";
+}
+
+// Matrix Background
+const canvas = document.getElementById("matrixCanvas");
+const ctx = canvas.getContext("2d");
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789$€¥';
+const fontSize = 16;
+const columns = canvas.width / fontSize;
+
+const drops = [];
+for (let x = 0; x < columns; x++) drops[x] = Math.random() * canvas.height;
+
+function draw() {
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.05)'; // transparan agar card tetap jelas
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    ctx.fillStyle = '#00ff00';
+    ctx.font = fontSize + 'px monospace';
+
+    for (let i = 0; i < drops.length; i++) {
+        const text = letters[Math.floor(Math.random() * letters.length)];
+        ctx.fillText(text, i * fontSize, drops[i]);
+        drops[i] += fontSize;
+
+        if (drops[i] > canvas.height && Math.random() > 0.975) {
+            drops[i] = 0;
+        }
+    }
+    requestAnimationFrame(draw);
+}
+draw();
+
+window.addEventListener('resize', () => {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+});
+</script>
+
+</body>
+</html>

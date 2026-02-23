@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<title>Login Halaman</title>
+<style>
+* {
+    box-sizing: border-box;
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+/* ===== Background Matrix Hitam-Putih ===== */
+body {
+    height: 100vh;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: black; /* default */
+}
+
+/* canvas matrix */
+#matrixCanvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 0; /* di bawah card */
+}
+
+/* ===== Login Card ===== */
+.login-card {
+    position: relative;
+    z-index: 10; /* di atas matrix */
+    background: rgba(255,255,255,0.85); /* card terang untuk kontras */
+    padding: 40px;
+    border-radius: 20px;
+    width: 360px;
+    text-align: center;
+    border: 3px solid rgba(0,0,0,0.8);
+    box-shadow: 0 0 20px rgba(0,0,0,0.5);
+}
+
+.login-card h2 {
+    margin-bottom: 25px;
+    color: black;
+    letter-spacing: 1px;
+}
+
+.login-card input {
+    width: 100%;
+    padding: 12px;
+    margin: 12px 0;
+    border-radius: 10px;
+    border: 1px solid #333;
+    outline: none;
+    font-size: 15px;
+}
+
+.login-card button {
+    width: 100%;
+    padding: 12px;
+    margin-top: 20px;
+    border-radius: 10px;
+    border: none;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    background: linear-gradient(135deg, #555, #000);
+    color: white;
+    transition: 0.3s;
+}
+
+.login-card button:hover {
+    transform: scale(1.05);
+}
+
+.error {
+    color: #ff5252;
+    margin-top: 10px;
+    font-size: 14px;
+}
+
+a {
+    color: #333;
+    text-decoration: underline;
+    cursor: pointer;
+    display: inline-block;
+    margin-top: 12px;
+    font-size: 14px;
+}
+</style>
+</head>
+<body>
+
+<canvas id="matrixCanvas"></canvas>
+
+<div class="login-card">
+    <h2>LOGIN👾✨</h2>
+    <input type="text" id="username" placeholder="Username">
+    <input type="password" id="password" placeholder="Password">
+    <button onclick="login()">Masuk</button>
+    <div class="error" id="error"></div>
+    <a href="forgetpassword.html"> ➼ Lupa Kata Sandi?</a>
+</div>
+
+<script>
+// Login function
+function login() {
+    const user = document.getElementById("username").value;
+    const pass = document.getElementById("password").value;
+    const errorDiv = document.getElementById("error");
+    errorDiv.innerText = '';
+
+    if(user === "Day777" && pass === "12345678") {
+        window.location.href = "Dashboard.html";
+    } else {
+        errorDiv.innerText = "Username atau password salah!";
+    }
+}
+
+// ===== Matrix Background Hitam-Putih =====
+const canvas = document.getElementById("matrixCanvas");
+const ctx = canvas.getContext("2d");
+
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+const fontSize = 16;
+const columns = canvas.width / fontSize;
+
+const drops = [];
+for(let x = 0; x < columns; x++) drops[x] = Math.random() * canvas.height;
+
+// Fungsi random hitam-putih
+function randomBW() {
+    return Math.random() > 0.5 ? "#000" : "#fff";
+}
+
+// Fungsi draw
+function drawMatrix() {
+    // Background berubah-ubah hitam-putih secara transparan
+    const bgAlpha = 0.05 + Math.random() * 0.05; 
+    ctx.fillStyle = `rgba(255,255,255,${bgAlpha})`;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    ctx.font = fontSize + "px monospace";
+
+    for(let i = 0; i < drops.length; i++) {
+        ctx.fillStyle = randomBW(); // karakter hitam atau putih acak
+        const text = letters[Math.floor(Math.random() * letters.length)];
+        ctx.fillText(text, i*fontSize, drops[i]);
+        drops[i] += fontSize;
+
+        if(drops[i] > canvas.height && Math.random() > 0.975) {
+            drops[i] = 0;
+        }
+    }
+
+    requestAnimationFrame(drawMatrix);
+}
+
+drawMatrix();
+
+window.addEventListener('resize', () => {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+});
+</script>
+
+</body>
+</html>
